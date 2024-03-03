@@ -1,0 +1,5 @@
+N = input()
+lst = list(map(int, list(N)))
+lst.sort(reverse=True)
+lst = list(map(str, lst))
+print(''.join(lst))
