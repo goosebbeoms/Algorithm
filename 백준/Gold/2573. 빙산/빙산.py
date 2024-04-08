@@ -21,7 +21,7 @@ def BFS(i, j):
 
 N, M = map(int, input().split())    # N: 행, M: 열
 arr = [list(map(int, input().split())) for _ in range(N)]
-year = -1
+year = 0
 
 while True:
     visited = [[False] * M for _ in range(N)]
@@ -39,10 +39,11 @@ while True:
                 if arr[i][j] > 0 and not visited[i][j]:
                     BFS(i, j)
                     group += 1
-        year += 1
         if group >= 2:
             print(year)
             break
+
+        year += 1
     else:
         print(0)
         break
