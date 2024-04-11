@@ -32,3 +32,77 @@
 
  <p>첫째 줄에 궁수의 공격으로 제거할 수 있는 적의 최대 수를 출력한다.</p>
 
+
+### 아래 코드 풀이 방식도 확인해보기!!!
+```python
+import sys
+from itertools import combinations
+gets = sys.stdin.readline
+
+n, m, d = map(int, gets().split())
+
+board = [list(map(lambda x: True if x == '1' else False, gets().split())) for i in range(n)]
+
+ans = 0
+max_ans = 0
+for i in range(n):
+    for j in range(m):
+        if board[i][j]:
+            max_ans += 1
+
+def get_target_bfs(y, time):
+    x = n - time - 1
+    for tmp_dist in range(d):
+        tmp_x, tmp_y = x, y-tmp_dist
+        for i in range(tmp_dist):
+            if tmp_x >= 0 and tmp_x < n and tmp_y >= 0 and tmp_y < m:
+                if board[tmp_x][tmp_y]:
+                    return tuple([tmp_x,tmp_y])
+            tmp_x -= 1
+            tmp_y += 1
+        for i in range(tmp_dist):
+            if tmp_x >= 0 and tmp_x < n and tmp_y >= 0 and tmp_y < m:
+                if board[tmp_x][tmp_y]:
+                    return tuple([tmp_x,tmp_y])
+            tmp_x += 1
+            tmp_y += 1
+        if tmp_x >= 0 and tmp_x < n and tmp_y >= 0 and tmp_y < m:
+            if board[tmp_x][tmp_y]:
+                return tuple([tmp_x, tmp_y])
+
+    return False
+
+
+def simulate(archers):
+    global ans
+    tmp_ans = 0
+    killed_set = set()
+
+    for i in range(n):
+        if tmp_ans + 3*(n-i) <= ans:
+            break
+        if tmp_ans >= max_ans:
+            break
+
+        tmp_killed_set = set()
+        for y in archers:
+            tmp_killed = get_target_bfs(y, i)
+            if tmp_killed:
+                tmp_killed_set.add(tmp_killed)
+        for x, y in tmp_killed_set:
+            board[x][y] = False
+            tmp_ans += 1
+        killed_set = killed_set.union(tmp_killed_set)
+    if tmp_ans >= ans:
+        ans = tmp_ans
+
+    for x, y in killed_set:
+        board[x][y] = True
+
+    return
+
+for archers in combinations(range(m), 3):
+    simulate(archers)
+
+print(ans)
+```
