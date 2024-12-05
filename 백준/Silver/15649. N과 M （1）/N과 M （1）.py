@@ -1,20 +1,19 @@
-def comb(x):
+def perm(x):
     if x == M:
-        print(*nums)
+        print(*temp_list)
 
     for i in range(1, N+1):
         if used[i]:
             continue
 
-        nums.append(i)
+        temp_list.append(i)
         used[i] = True
-        comb(x+1)
-        nums.pop()
+        perm(x+1)
+        temp_list.pop()
         used[i] = False
-
 
 N, M = map(int, input().split())
 used = [False] * (N+1)
-nums = []
+temp_list = []
 
-comb(0)
+perm(0)
