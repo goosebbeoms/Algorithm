@@ -1,38 +1,20 @@
-import sys
-input = sys.stdin.readline
+def recur(idx, price):
+    global max_value
 
-def DFS(start):
-    global result
-
-    # 재귀 호출 종료 조건: start가 N 이상일 때
-    if start >= N:
-        sum_v = 0
-        for j in idx_st:
-            sum_v += P[j]
-        if result < sum_v:
-            result = sum_v
+    if idx > N:
         return
 
-    # 상담을 하는 경우
-    if start + T[start] <= N:  # 상담을 할 수 있는 조건 확인
-        idx_st.append(start)
-        DFS(start + T[start])
-        idx_st.pop()
+    if idx == N:
+        max_value = max(max_value, price)
+        return
 
-    # 상담을 하지 않는 경우
-    DFS(start + 1)
+    recur(idx+interviews[idx][0], price+interviews[idx][1])
+    recur(idx+1, price)
 
 
-N = int(input())    # 업무일
-T = []              # 상담 소요일
-P = []              # 상담 비용
-for _ in range(N):
-    t, p = map(int, input().split())
-    T.append(t)
-    P.append(p)
+N = int(input())
+interviews = [list(map(int, input().split())) for _ in range(N)]
+max_value = -9999999999999999
 
-idx_st = []
-result = 0
-DFS(0)
-
-print(result)
+recur(0, 0)
+print(max_value)
