@@ -1,20 +1,23 @@
-def recur(idx, price):
-    global max_value
+def sol(idx):
 
-    if idx > N:
-        return
+    if idx > N+1:
+        return -9999999999999
+    if idx == N+1:
+        return 0
 
-    if idx == N:
-        max_value = max(max_value, price)
-        return
+    if dp[idx] != -1:
+        return dp[idx]
 
-    recur(idx+interviews[idx][0], price+interviews[idx][1])
-    recur(idx+1, price)
+    dp[idx] = max(sol(idx+1), sol(idx+table[idx][0]) + table[idx][1])
+    return dp[idx]
 
 
 N = int(input())
-interviews = [list(map(int, input().split())) for _ in range(N)]
-max_value = -9999999999999999
+table = [[] for _ in range(N+1)]
+for i in range(N):
+    a, b = map(int, input().split())
+    table[i+1] = [a, b]
+dp = [-1 for _ in range(N+1)]
 
-recur(0, 0)
-print(max_value)
+ans = sol(1)
+print(ans)
