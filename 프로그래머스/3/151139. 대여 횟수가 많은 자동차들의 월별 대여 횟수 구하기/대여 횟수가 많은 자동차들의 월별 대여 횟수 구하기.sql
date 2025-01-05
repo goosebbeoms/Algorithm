@@ -6,14 +6,12 @@ FROM (
     FROM car_rental_company_rental_history
     WHERE 1 = 1
         AND (YEAR(start_date) = 2022 AND MONTH(start_date) in (8, 9, 10))
-        # AND (YEAR(end_date) = 2022 AND MONTH(end_date) in (8, 9, 10))
 ) default_table
 INNER JOIN (
     SELECT car_id
     FROM car_rental_company_rental_history
     WHERE 1 = 1
         AND (YEAR(start_date) = 2022 AND MONTH(start_date) in (8, 9, 10))
-        # OR (YEAR(end_date) = 2022 AND MONTH(end_date) in (8, 9, 10))
     GROUP BY car_id
     HAVING COUNT(*) >= 5
 ) car_id_table
