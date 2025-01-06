@@ -1,22 +1,15 @@
 N = int(input())
 arr = list(map(int, input().split()))
+answer = N
 
-cnt = 0
-for i in arr:
-    if i == 1:
+for num in arr:
+    if num == 1:
+        answer -= 1
         continue
 
-    if i == 2:
-        cnt += 1
-        continue
-
-    temp = 2
-    while temp <= i:
-        if i % temp == 0:
+    for i in range(2, int(num**0.5)+1):
+        if num % i == 0:
+            answer -= 1
             break
-        temp += 1
 
-    if temp == i:
-        cnt += 1
-
-print(cnt)
+print(answer)
