@@ -1,6 +1,9 @@
 def dfs(n, cnt):
     global N, ans
 
+    if ans >= (cnt + (N-n)*2):  # 끝까지 진행해도 정답 갱신 불가능
+        return
+
     if n == N:
         ans = max(ans, cnt)
         return
@@ -9,7 +12,7 @@ def dfs(n, cnt):
     if arr[n][0] <= 0:
         dfs(n+1, cnt)
     else:
-        flag = False
+        flag = False    # 한 번도 안 부디
         for j in range(N):
             if n == j or arr[j][0] <= 0:
                 continue
