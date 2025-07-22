@@ -1,46 +1,34 @@
 import java.util.*;
 
 class Solution {
-    static class Position {
-        final int y;
-        final int x;
-        final int distance;
-        
-        public Position(int y, int x, int distance) {
-            this.y = y;
-            this.x = x;
-            this.distance = distance;
-        }
-    }
-    
-    Queue<Position> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.distance));
-    
-    public void findPath(int y, int x, int distance, int[][] maps) {
-        if (y >= 0 && y < maps.length && x >= 0 && x < maps[0].length && maps[y][x] != 0) {
-            maps[y][x] = 0;
-            pq.add(new Position(y, x, distance + 1));
-        }
-    }
-    
     public int solution(int[][] maps) {
-        pq.add(new Position(0, 0, 1));
-        Map<Integer, Position> dist = new LinkedHashMap<>();
+        int rows = maps.length;
+        int cols = maps[0].length;
         
-        while (!pq.isEmpty()) {
-            Position cur = pq.poll();
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{0, 0, 1});
+        
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int row = cur[0];
+            int col = cur[1];
+            int dist = cur[2];
             
-            if (!dist.containsKey(cur.y * 1000 + cur.x)) {
-                dist.put(cur.y * 1000 + cur.x, cur);
-                
-                findPath(cur.y, cur.x + 1, cur.distance, maps);
-                findPath(cur.y, cur.x - 1, cur.distance, maps);
-                findPath(cur.y + 1, cur.x, cur.distance, maps);
-                findPath(cur.y - 1, cur.x, cur.distance, maps);
+            if (row == rows - 1 && col == cols - 1) {
+                return dist;
             }
-        }
-        
-        if (dist.containsKey(((maps.length - 1) * 1000) + (maps[0].length - 1))) {
-            return dist.get(((maps.length - 1) * 1000) + (maps[0].length - 1)).distance;
+            
+            for (int[] d : directions) {
+                int newRow = row + d[0];
+                int newCol = col + d[1];
+                
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maps[newRow][newCol] == 1) {
+                    maps[newRow][newCol] = 0;
+                    q.offer(new int[]{newRow, newCol, dist + 1});
+                }
+            }
         }
         
         return -1;
