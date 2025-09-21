@@ -1,57 +1,89 @@
 import java.util.*;
 
 class Solution {
-    private static final String[][] precedences = {
-        "+-*".split(""),
-        "+*-".split(""),
-        "-+*".split(""),
-        "-*+".split(""),
-        "*+-".split(""),
-        "*-+".split("")
-    };
-    
-    private long calculate(long lhs, long rhs, String op) {
-        return switch (op) {
-                case "+" -> lhs + rhs;
-                case "-" -> lhs - rhs;
-                case "*" -> lhs * rhs;
-                default -> 0;
-        };
+    public long calc(long num1, long num2, char op) {
+        if (op == '+') {
+            return num1 + num2;
+        } else if (op == '-') {
+            return num1 - num2;
+        } else {
+            return num1 * num2;
+        }
     }
     
-    private long calculate(List<String> tokens, String[] precedence) {
-        for (String op : precedence) {
-            for (int i = 0; i < tokens.size(); i++) {
-                if (tokens.get(i).equals(op)) {
-                    long lhs = Long.parseLong(tokens.get(i-1));
-                    long rhs = Long.parseLong(tokens.get(i+1));
-                    long result = calculate(lhs, rhs, op);
-                    tokens.remove(i-1);
-                    tokens.remove(i-1);
-                    tokens.remove(i-1);
-                    tokens.add(i-1, String.valueOf(result));
-                    i -= 2;
-                }
-            }
+    public void calculate(List<Long> nums, List<Character> ops, char operator) {
+        int idx;
+        while ((idx = ops.indexOf(operator)) != -1) {
+            long num = calc(nums.get(idx), nums.get(idx + 1), operator);
+            ops.remove(idx);
+            nums.remove(idx);
+            nums.remove(idx);
+            nums.add(idx, num);
         }
-        return Long.parseLong(tokens.get(0));
+        
+//         for (int i = 0; i < ops.size(); i++) {
+//             if (ops.get(i) == operator) {
+//                 long num = calc(nums.get(i), nums.get(i + 1), operator);
+                
+//                 ops.remove(i);
+//                 nums.remove(i);
+//                 nums.remove(i);
+//                 nums.add(i, num);
+//                 i--;
+//             }
+//         }
+    }
+    
+    public long operation(List<Long> numbers, List<Character> operations, char op1, char op2, char op3) {
+        // 해당 케이스 연산자 순서 계산 위해 리스트 깊은 복사
+        List<Long> nums = new ArrayList<>();
+        List<Character> ops = new ArrayList<>();
+        
+        for (int i = 0; i < numbers.size(); i++) {
+            nums.add(numbers.get(i));
+        }
+        for (int i = 0; i < operations.size(); i++) {
+            ops.add(operations.get(i));
+        }
+        
+        // 우선순위에 따라 연산 진행
+        calculate(nums, ops, op1);
+        calculate(nums, ops, op2);
+        calculate(nums, ops, op3);
+        
+        return nums.get(0);
     }
     
     public long solution(String expression) {
-        StringTokenizer tokenizer = new StringTokenizer(expression, "+-*", true);
-        List<String> tokens = new ArrayList<>();
-        while (tokenizer.hasMoreTokens()) {
-            tokens.add(tokenizer.nextToken());
-        }
+        long answer = 0;    // 정답 제출용
+        List<Long> numbers = new ArrayList<>();
+        List<Character> operations = new ArrayList<>();
         
-        long max = 0;
-        for (String[] precedence : precedences) {
-            long value = Math.abs(calculate(new ArrayList<>(tokens), precedence));
-            if (value > max) {
-                max = value;
+        StringBuilder sb = new StringBuilder();
+        // numbers 리스트와 operations 리스트에 expression 파싱
+        for (char c : expression.toCharArray()) {
+            if (c == '+' || c == '-' || c == '*') {
+                numbers.add(Long.parseLong(sb.toString()));
+                operations.add(c);
+                sb = new StringBuilder();
+            } else {
+                sb.append(c);
             }
         }
+        numbers.add(Long.parseLong(sb.toString()));
         
-        return max;
+        long[] candidates = new long[6];
+        candidates[0] = operation(numbers, operations, '+', '-', '*');
+        candidates[1] = operation(numbers, operations, '+', '*', '-');
+        candidates[2] = operation(numbers, operations, '-', '+', '*');
+        candidates[3] = operation(numbers, operations, '-', '*', '+');
+        candidates[4] = operation(numbers, operations, '*', '+', '-');
+        candidates[5] = operation(numbers, operations, '*', '-', '+');
+        
+        for (long candidate : candidates) {
+            answer = answer < Math.abs(candidate) ? Math.abs(candidate) : answer;
+        }
+        
+        return answer;
     }
 }
