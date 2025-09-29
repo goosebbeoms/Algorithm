@@ -1,23 +1,39 @@
-N = int(input())    # 기둥의 개수
-pillars = []
+N = int(input())
+graph = [0] * 10001
+x_list = []
+y_list = []
+
 for _ in range(N):
-    pillars.append(list(map(int, input().split())))    # 각 기둥의 왼쪽 면의 위치 L, 높이 H
-pillars.sort()
+    idx, hight = map(int, input().split())
+    graph[idx] = hight
+    x_list.append(idx)
+    y_list.append(hight)
 
-height_lst = [0] * (pillars[-1][0]+1)
-for pillar in pillars:
-    height_lst[pillar[0]] = pillar[1]
-highest_idx = height_lst.index(max(height_lst))
+max_hight = max(y_list)
+max_width = max(x_list)
+prefix = [0] * (max_width + 2)
+suffix = [0] * (max_width + 2)
 
-s = 0
-temp_max = 0
-for i in height_lst[:highest_idx+1]:
-    if temp_max < i:
-        temp_max = i
-    s += temp_max
-temp_max = 0
-for j in height_lst[len(height_lst)-1:highest_idx:-1]:
-    if temp_max < j:
-        temp_max = j
-    s += temp_max
-print(s)
+max_point = []
+
+# prefix
+h = 0
+for f in range(1, max_width + 3):
+    if graph[f] == max_hight:
+        max_point.append(f)
+        break
+    h = max(h, graph[f])
+    prefix[f] = prefix[f-1] + h
+
+h = 0
+for b in range(max_width, 0, -1):
+    if graph[b] == max_hight:
+        max_point.append(b)
+        break
+    h = max(h, graph[b])
+    suffix[b] = suffix[b+1] + h
+
+answer = max(prefix) + max(suffix)
+answer += (max_point[1] - max_point[0] + 1) * max_hight
+
+print(answer)
